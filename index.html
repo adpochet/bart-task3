@@ -40,15 +40,14 @@
       max-width: 900px;
       margin: 0 auto;
       box-sizing: border-box;
+      position: relative;
     }
 
     .jspsych-btn {
       border-radius: 8px;
     }
 
-    /* =========================
-       MODE INSTRUCTIONS
-       ========================= */
+    /* Instructions et fin : comme avant */
     body.instructions-mode .jspsych-content-wrapper,
     body.end-mode .jspsych-content-wrapper {
       display: flex;
@@ -92,51 +91,20 @@
       white-space: normal;
     }
 
-    /* =========================
-       MODE BART
-       ========================= */
+    /* Page BART */
     body.bart-mode .jspsych-content-wrapper {
       display: block;
+      min-height: 100vh;
+      padding-top: 4px;
     }
 
     body.bart-mode .jspsych-content {
-      max-width: 760px;
-      padding: 4px 8px 8px 8px;
+      max-width: 900px;
+      padding: 0;
+      transform-origin: top center;
     }
 
-    body.bart-mode .jspsych-btn {
-      font-size: 16px !important;
-      padding: 10px 16px !important;
-      margin: 5px !important;
-      white-space: normal;
-    }
-
-    /* on réduit les marges générales pendant la BART */
-    body.bart-mode p,
-    body.bart-mode h2,
-    body.bart-mode h3,
-    body.bart-mode div {
-      margin-top: 0;
-    }
-
-    /* on essaie de compacter l’affichage du ballon */
-    body.bart-mode svg {
-      display: block;
-      margin: 0 auto !important;
-      max-width: 100% !important;
-      height: auto !important;
-      max-height: 34vh !important;
-    }
-
-    /* compacter les blocs d’infos/score */
-    body.bart-mode .jspsych-content > div {
-      margin-top: 6px !important;
-      margin-bottom: 6px !important;
-    }
-
-    /* =========================
-       TABLETTE
-       ========================= */
+    /* mobile */
     @media (max-width: 768px) {
       body.instructions-mode .jspsych-content,
       body.end-mode .jspsych-content {
@@ -160,25 +128,8 @@
         font-size: 17px !important;
         padding: 12px 18px !important;
       }
-
-      body.bart-mode .jspsych-content {
-        max-width: 100%;
-        padding: 4px 8px 8px 8px;
-      }
-
-      body.bart-mode .jspsych-btn {
-        font-size: 16px !important;
-        padding: 10px 12px !important;
-      }
-
-      body.bart-mode svg {
-        max-height: 30vh !important;
-      }
     }
 
-    /* =========================
-       TELEPHONE
-       ========================= */
     @media (max-width: 480px) {
       body.instructions-mode .jspsych-content,
       body.end-mode .jspsych-content {
@@ -204,22 +155,6 @@
         padding: 12px !important;
         margin: 6px 0 !important;
       }
-
-      body.bart-mode .jspsych-content {
-        max-width: 100%;
-        padding: 2px 6px 6px 6px;
-      }
-
-      body.bart-mode .jspsych-btn {
-        width: 100% !important;
-        font-size: 15px !important;
-        padding: 10px !important;
-        margin: 4px 0 !important;
-      }
-
-      body.bart-mode svg {
-        max-height: 26vh !important;
-      }
     }
   </style>
 </head>
@@ -234,6 +169,38 @@
     document.body.classList.add(mode);
   }
 
+  function fitBartToViewport() {
+    if (!document.body.classList.contains("bart-mode")) return;
+
+    const content = document.querySelector(".jspsych-content");
+    if (!content) return;
+
+    // reset avant mesure
+    content.style.transform = "scale(1)";
+    content.style.marginTop = "0px";
+
+    const viewportHeight = window.innerHeight;
+    const rect = content.getBoundingClientRect();
+
+    // petite marge de sécurité
+    const availableHeight = viewportHeight - 8;
+
+    if (rect.height > availableHeight) {
+      let scale = availableHeight / rect.height;
+
+      // éviter de trop écraser
+      if (scale > 1) scale = 1;
+      if (scale < 0.68) scale = 0.68;
+
+      content.style.transform = `scale(${scale})`;
+
+      // on compense la hauteur visuelle pour éviter que le haut colle
+      const scaledHeight = rect.height * scale;
+      const topGap = Math.max(0, (viewportHeight - scaledHeight) / 20);
+      content.style.marginTop = `${topGap}px`;
+    }
+  }
+
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
@@ -242,21 +209,21 @@
   let maxWidth = "900px";
 
   if (screenWidth <= 480) {
-    startSize = 0.17;
-    sizeIncrement = 0.022;
+    startSize = 0.20;
+    sizeIncrement = 0.025;
     maxWidth = "100%";
   } else if (screenWidth <= 768) {
-    startSize = 0.22;
-    sizeIncrement = 0.028;
+    startSize = 0.25;
+    sizeIncrement = 0.03;
     maxWidth = "100%";
   } else if (screenWidth <= 1024) {
-    startSize = 0.28;
-    sizeIncrement = 0.035;
+    startSize = 0.30;
+    sizeIncrement = 0.04;
     maxWidth = "95%";
   }
 
   if (screenHeight < 800) {
-    startSize = Math.max(0.16, startSize - 0.03);
+    startSize = Math.max(0.18, startSize - 0.03);
     sizeIncrement = Math.max(0.02, sizeIncrement - 0.005);
   }
 
@@ -265,6 +232,10 @@
     if (content) {
       content.style.maxWidth = maxWidth;
     }
+  });
+
+  window.addEventListener("resize", function() {
+    setTimeout(fitBartToViewport, 100);
   });
 
   const instructions = {
@@ -328,6 +299,8 @@
       },
       on_load: function() {
         setPageMode("bart-mode");
+        setTimeout(fitBartToViewport, 80);
+        setTimeout(fitBartToViewport, 250);
       },
       on_finish: function(data) {
         totalPoints = data.total_points;
@@ -378,4 +351,4 @@
 
   jsPsych.run(timeline);
 </script>
-</html> 
+</html>
