@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BART minimale responsive</title>
+
+  <script src="https://unpkg.com/jspsych@8.2.3"></script>
+  <link href="https://unpkg.com/jspsych@8.2.3/css/jspsych.css" rel="stylesheet" type="text/css" />
+
+  <script src="https://unpkg.com/@jspsych/plugin-instructions@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0"></script>
+  <script src="https://unpkg.com/@jspsych-contrib/plugin-bart"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f8f8f8;
+      width: 100%;
+      overflow-x: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .jspsych-display-element {
+      width: 100%;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .jspsych-content-wrapper {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .jspsych-content {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .jspsych-btn {
+      font-size: 18px !important;
+      padding: 12px 20px !important;
+      margin: 8px !important;
+      border-radius: 8px;
+      max-width: 100%;
+      white-space: normal;
+    }
+
+    h2 {
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    p, li {
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    ul {
+      text-align: left;
+      display: inline-block;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .jspsych-content {
+        padding: 14px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      p, li {
+        font-size: 17px;
+      }
+
+      .jspsych-btn {
+        width: 100% !important;
+        font-size: 18px !important;
+        padding: 14px !important;
+        margin: 8px 0 !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .jspsych-content {
+        padding: 12px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      p, li {
+        font-size: 16px;
+      }
+
+      .jspsych-btn {
+        width: 100% !important;
+        font-size: 18px !important;
+        padding: 14px !important;
+      }
+    }
+  </style>
+</head>
+<body></body>
+
+<script>
+  const jsPsych = initJsPsych({});
+  const timeline = [];
+
+  const screenWidth = window.innerWidth;
+
+  let startSize = 0.4;
+  let sizeIncrement = 0.05;
+  let maxWidth = "900px";
+
+  if (screenWidth <= 480) {
+    startSize = 0.25;
+    sizeIncrement = 0.035;
+    maxWidth = "100%";
+  } else if (screenWidth <= 768) {
+    startSize = 0.3;
+    sizeIncrement = 0.04;
+    maxWidth = "100%";
+  } else if (screenWidth <= 1024) {
+    startSize = 0.35;
+    sizeIncrement = 0.045;
+    maxWidth = "95%";
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const content = document.querySelector(".jspsych-content");
+    if (content) {
+      content.style.maxWidth = maxWidth;
+    }
+  });
+
+  const instructions = {
+    type: jsPsychInstructions,
+    pages: [
+      `
+      <h2>Tâche des ballons</h2>
+      <p>Dans cette tâche, tu verras plusieurs ballons.</p>
+      <p>À chaque ballon, tu peux :</p>
+      <ul>
+        <li><strong>Gonfler</strong> : gonfler le ballon et gagner des points</li>
+        <li><strong>Encaisser</strong> : sécuriser les points du ballon actuel</li>
+      </ul>
+      <p>Attention : si le ballon éclate, tu perds les points de ce ballon.</p>
+      <p>Essaie de gagner le plus de points possible.</p>
+      `,
+      `
+      <p>Le risque d’explosion n’est pas visible.</p>
+      <p>Chaque ballon peut éclater à un moment différent.</p>
+      <p>Clique sur <strong>Suivant</strong> pour commencer.</p>
+      `
+    ],
+    show_clickable_nav: true,
+    button_label_next: "Suivant",
+    button_label_previous: "Retour"
+  };
+
+  timeline.push(instructions);
+
+  const N_BALLOONS = 10;
+  let totalPoints = 0;
+
+  function generatePopThreshold() {
+    return Math.floor(Math.random() * 64) + 1;
+  }
+
+  for (let i = 0; i < N_BALLOONS; i++) {
+    timeline.push({
+      type: jsPsychBart,
+      pop_threshold: generatePopThreshold(),
+      starting_total_points: function() {
+        return totalPoints;
+      },
+      points_per_pump: 1,
+      balloon_color: "#e74c3c",
+      balloon_starting_size: startSize,
+      balloon_size_increment: sizeIncrement,
+      show_balloon_value: true,
+      show_total_points: true,
+      pump_button_label: "Gonfler",
+      collect_button_label: "Encaisser",
+      data: {
+        task: "bart",
+        balloon_number: i + 1,
+        screen_width: window.innerWidth,
+        screen_height: window.innerHeight,
+        user_agent: navigator.userAgent
+      },
+      on_finish: function(data) {
+        totalPoints = data.total_points;
+      }
+    });
+  }
+
+  const end_screen = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: function() {
+      const data = jsPsych.data.get().filter({ task: "bart" }).values();
+
+      let totalPumps = 0;
+      let explosions = 0;
+
+      data.forEach(d => {
+        totalPumps += d.pumps;
+        if (d.popped) explosions++;
+      });
+
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+        ? "mobile"
+        : "ordinateur";
+
+      end_screen.results = {
+        type: "bartComplete",
+        pumps: totalPumps,
+        explosions: explosions,
+        score: totalPoints,
+        device: isMobile,
+        screenwidth: window.innerWidth
+      };
+
+      return "<h2>Fin de la tâche</h2>" +
+             "<p>Score final : <strong>" + totalPoints + "</strong></p>" +
+             "<p>Clique sur le bouton ci-dessous pour continuer.</p>";
+    },
+    choices: ["Continuer"],
+    on_finish: function() {
+      window.parent.postMessage(end_screen.results, "*");
+    }
+  };
+
+  timeline.push(end_screen);
+
+  jsPsych.run(timeline);
+</script>
+</html>
