@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BART minimale responsive</title>
+  <title>BART responsive compacte</title>
 
   <script src="https://unpkg.com/jspsych@8.2.3"></script>
   <link href="https://unpkg.com/jspsych@8.2.3/css/jspsych.css" rel="stylesheet" type="text/css" />
@@ -12,110 +12,135 @@
   <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0"></script>
   <script src="https://unpkg.com/@jspsych-contrib/plugin-bart"></script>
 
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: #f8f8f8;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f8f8f8;
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      font-family: Arial, sans-serif;
+    }
 
-  .jspsych-display-element {
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    box-sizing: border-box;
-  }
+    .jspsych-display-element {
+      width: 100%;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
 
-  .jspsych-content-wrapper {
-    width: 100%;
-    height: 100vh;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    .jspsych-content-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
 
-  .jspsych-content {
-    width: 100%;
-    max-width: 900px;
-    height: 100vh;
-    margin: 0 auto;
-    padding: 12px;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-
-  .jspsych-btn {
-    font-size: 18px !important;
-    padding: 12px 20px !important;
-    margin: 8px !important;
-    border-radius: 8px;
-    max-width: 100%;
-    white-space: normal;
-  }
-
-  h2 {
-    font-size: 28px;
-    line-height: 1.2;
-    margin-top: 0;
-  }
-
-  p, li {
-    font-size: 18px;
-    line-height: 1.4;
-  }
-
-  ul {
-    text-align: left;
-    display: inline-block;
-    padding-left: 20px;
-  }
-
-  @media (max-width: 768px) {
     .jspsych-content {
-      padding: 10px;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 8px 12px 12px 12px;
+      box-sizing: border-box;
+    }
+
+    .jspsych-btn {
+      font-size: 16px !important;
+      padding: 10px 16px !important;
+      margin: 6px !important;
+      border-radius: 8px;
+      max-width: 100%;
+      white-space: normal;
     }
 
     h2 {
       font-size: 24px;
+      line-height: 1.2;
+      margin: 0 0 10px 0;
     }
 
     p, li {
       font-size: 16px;
+      line-height: 1.35;
+      margin: 8px 0;
     }
 
-    .jspsych-btn {
-      width: 100% !important;
-      font-size: 18px !important;
-      padding: 12px !important;
-      margin: 6px 0 !important;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .jspsych-content {
-      padding: 8px;
+    ul {
+      text-align: left;
+      display: inline-block;
+      padding-left: 20px;
+      margin: 8px 0;
     }
 
-    h2 {
-      font-size: 22px;
+    /* Réduire un peu les gros blocs de score et les espacements internes du plugin */
+    .jspsych-bart-container,
+    .jspsych-bart-display {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
     }
 
-    p, li {
-      font-size: 15px;
+    .jspsych-bart-balloon-container {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
     }
 
-    .jspsych-btn {
-      width: 100% !important;
-      font-size: 17px !important;
-      padding: 12px !important;
+    .jspsych-bart-score-box,
+    .jspsych-bart-info-box,
+    .jspsych-bart-points-box {
+      font-size: 15px !important;
+      padding: 8px !important;
+      margin: 6px !important;
     }
-  }
-</style>
+
+    @media (max-width: 768px) {
+      .jspsych-content {
+        padding: 8px 10px 10px 10px;
+      }
+
+      h2 {
+        font-size: 21px;
+      }
+
+      p, li {
+        font-size: 15px;
+        line-height: 1.3;
+      }
+
+      .jspsych-btn {
+        width: 100% !important;
+        font-size: 16px !important;
+        padding: 12px !important;
+        margin: 6px 0 !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .jspsych-content {
+        padding: 6px 8px 8px 8px;
+      }
+
+      h2 {
+        font-size: 19px;
+      }
+
+      p, li {
+        font-size: 14px;
+        line-height: 1.25;
+      }
+
+      .jspsych-btn {
+        width: 100% !important;
+        font-size: 16px !important;
+        padding: 12px !important;
+        margin: 5px 0 !important;
+      }
+    }
+  </style>
 </head>
 <body></body>
 
@@ -124,23 +149,31 @@
   const timeline = [];
 
   const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
 
-  let startSize = 0.4;
-  let sizeIncrement = 0.05;
+  let startSize = 0.32;
+  let sizeIncrement = 0.04;
   let maxWidth = "900px";
 
+  // Réglages plus compacts selon écran
   if (screenWidth <= 480) {
-    startSize = 0.25;
-    sizeIncrement = 0.035;
+    startSize = 0.18;
+    sizeIncrement = 0.025;
     maxWidth = "100%";
   } else if (screenWidth <= 768) {
-    startSize = 0.3;
-    sizeIncrement = 0.04;
+    startSize = 0.22;
+    sizeIncrement = 0.03;
     maxWidth = "100%";
   } else if (screenWidth <= 1024) {
-    startSize = 0.35;
-    sizeIncrement = 0.045;
+    startSize = 0.26;
+    sizeIncrement = 0.035;
     maxWidth = "95%";
+  }
+
+  // Si écran peu haut, on compacte encore un peu
+  if (screenHeight < 750) {
+    startSize = Math.max(0.16, startSize - 0.03);
+    sizeIncrement = Math.max(0.02, sizeIncrement - 0.005);
   }
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -252,4 +285,4 @@
 
   jsPsych.run(timeline);
 </script>
-</html>
+</html> 
