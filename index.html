@@ -12,101 +12,110 @@
   <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0"></script>
   <script src="https://unpkg.com/@jspsych-contrib/plugin-bart"></script>
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #f8f8f8;
-      width: 100%;
-      overflow-x: hidden;
-      font-family: Arial, sans-serif;
-    }
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #f8f8f8;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
 
-    .jspsych-display-element {
-      width: 100%;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
+  .jspsych-display-element {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
 
-    .jspsych-content-wrapper {
-      width: 100%;
-      box-sizing: border-box;
-    }
+  .jspsych-content-wrapper {
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
+  .jspsych-content {
+    width: 100%;
+    max-width: 900px;
+    height: 100vh;
+    margin: 0 auto;
+    padding: 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .jspsych-btn {
+    font-size: 18px !important;
+    padding: 12px 20px !important;
+    margin: 8px !important;
+    border-radius: 8px;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  h2 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-top: 0;
+  }
+
+  p, li {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  ul {
+    text-align: left;
+    display: inline-block;
+    padding-left: 20px;
+  }
+
+  @media (max-width: 768px) {
     .jspsych-content {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 16px;
-      box-sizing: border-box;
-    }
-
-    .jspsych-btn {
-      font-size: 18px !important;
-      padding: 12px 20px !important;
-      margin: 8px !important;
-      border-radius: 8px;
-      max-width: 100%;
-      white-space: normal;
+      padding: 10px;
     }
 
     h2 {
-      font-size: 28px;
-      line-height: 1.2;
+      font-size: 24px;
     }
 
     p, li {
-      font-size: 18px;
-      line-height: 1.5;
+      font-size: 16px;
     }
 
-    ul {
-      text-align: left;
-      display: inline-block;
-      padding-left: 20px;
+    .jspsych-btn {
+      width: 100% !important;
+      font-size: 18px !important;
+      padding: 12px !important;
+      margin: 6px 0 !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .jspsych-content {
+      padding: 8px;
     }
 
-    @media (max-width: 768px) {
-      .jspsych-content {
-        padding: 14px;
-      }
-
-      h2 {
-        font-size: 24px;
-      }
-
-      p, li {
-        font-size: 17px;
-      }
-
-      .jspsych-btn {
-        width: 100% !important;
-        font-size: 18px !important;
-        padding: 14px !important;
-        margin: 8px 0 !important;
-      }
+    h2 {
+      font-size: 22px;
     }
 
-    @media (max-width: 480px) {
-      .jspsych-content {
-        padding: 12px;
-      }
-
-      h2 {
-        font-size: 22px;
-      }
-
-      p, li {
-        font-size: 16px;
-      }
-
-      .jspsych-btn {
-        width: 100% !important;
-        font-size: 18px !important;
-        padding: 14px !important;
-      }
+    p, li {
+      font-size: 15px;
     }
-  </style>
+
+    .jspsych-btn {
+      width: 100% !important;
+      font-size: 17px !important;
+      padding: 12px !important;
+    }
+  }
+</style>
 </head>
 <body></body>
 
