@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BART responsive</title>
+  <title>BART minimale</title>
 
   <script src="https://unpkg.com/jspsych@8.2.3"></script>
   <link href="https://unpkg.com/jspsych@8.2.3/css/jspsych.css" rel="stylesheet" type="text/css" />
@@ -47,7 +47,7 @@
       border-radius: 8px;
     }
 
-    /* Instructions et fin : comme avant */
+    /* Instructions et fin */
     body.instructions-mode .jspsych-content-wrapper,
     body.end-mode .jspsych-content-wrapper {
       display: flex;
@@ -104,7 +104,7 @@
       transform-origin: top center;
     }
 
-    /* mobile */
+    /* tablette */
     @media (max-width: 768px) {
       body.instructions-mode .jspsych-content,
       body.end-mode .jspsych-content {
@@ -130,6 +130,7 @@
       }
     }
 
+    /* téléphone */
     @media (max-width: 480px) {
       body.instructions-mode .jspsych-content,
       body.end-mode .jspsych-content {
@@ -158,6 +159,7 @@
     }
   </style>
 </head>
+
 <body class="instructions-mode"></body>
 
 <script>
@@ -175,26 +177,21 @@
     const content = document.querySelector(".jspsych-content");
     if (!content) return;
 
-    // reset avant mesure
     content.style.transform = "scale(1)";
     content.style.marginTop = "0px";
 
     const viewportHeight = window.innerHeight;
     const rect = content.getBoundingClientRect();
-
-    // petite marge de sécurité
     const availableHeight = viewportHeight - 8;
 
     if (rect.height > availableHeight) {
       let scale = availableHeight / rect.height;
 
-      // éviter de trop écraser
       if (scale > 1) scale = 1;
       if (scale < 0.68) scale = 0.68;
 
       content.style.transform = `scale(${scale})`;
 
-      // on compense la hauteur visuelle pour éviter que le haut colle
       const scaledHeight = rect.height * scale;
       const topGap = Math.max(0, (viewportHeight - scaledHeight) / 20);
       content.style.marginTop = `${topGap}px`;
@@ -245,7 +242,7 @@
       <h2>Tâche des ballons</h2>
       <p>Dans cette tâche, tu verras plusieurs ballons.</p>
       <p>À chaque ballon, tu peux :</p>
-      <ul>
+      <ul style="text-align:left; display:inline-block;">
         <li><strong>Gonfler</strong> : gonfler le ballon et gagner des points</li>
         <li><strong>Encaisser</strong> : sécuriser les points du ballon actuel</li>
       </ul>
@@ -255,12 +252,12 @@
       `
       <p>Le risque d’explosion n’est pas visible.</p>
       <p>Chaque ballon peut éclater à un moment différent.</p>
-      <p>Clique sur <strong>Suivant</strong> pour commencer.</p>
+      <p>Clique sur <strong>Next</strong> pour commencer.</p>
       `
     ],
     show_clickable_nav: true,
-    button_label_next: "Suivant",
-    button_label_previous: "Retour",
+    button_label_next: "Next",
+    button_label_previous: "Back",
     on_load: function() {
       setPageMode("instructions-mode");
     }
@@ -268,17 +265,15 @@
 
   timeline.push(instructions);
 
-  const N_BALLOONS = 10;
+  const N_BALLOONS = 15;
   let totalPoints = 0;
 
-  function generatePopThreshold() {
-    return Math.floor(Math.random() * 64) + 1;
-  }
+  const popThresholds = [18, 42, 9, 31, 56, 14, 27, 48, 7, 36, 60, 22, 11, 53, 29];
 
   for (let i = 0; i < N_BALLOONS; i++) {
     timeline.push({
       type: jsPsychBart,
-      pop_threshold: generatePopThreshold(),
+      pop_threshold: popThresholds[i],
       starting_total_points: function() {
         return totalPoints;
       },
@@ -292,10 +287,7 @@
       collect_button_label: "Encaisser",
       data: {
         task: "bart",
-        balloon_number: i + 1,
-        screen_width: window.innerWidth,
-        screen_height: window.innerHeight,
-        user_agent: navigator.userAgent
+        balloon_number: i + 1
       },
       on_load: function() {
         setPageMode("bart-mode");
@@ -315,11 +307,23 @@
 
       let totalPumps = 0;
       let explosions = 0;
+      let pumpsNonExploses = 0;
+      let nbBallonsNonExploses = 0;
 
       data.forEach(d => {
         totalPumps += d.pumps;
-        if (d.popped) explosions++;
+
+        if (d.popped) {
+          explosions++;
+        } else {
+          pumpsNonExploses += d.pumps;
+          nbBallonsNonExploses++;
+        }
       });
+
+      const adjustedAverage = nbBallonsNonExploses > 0
+        ? pumpsNonExploses / nbBallonsNonExploses
+        : 0;
 
       const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
         ? "mobile"
@@ -330,8 +334,12 @@
         pumps: totalPumps,
         explosions: explosions,
         score: totalPoints,
+        adjustedAverage: adjustedAverage,
+        nonExplodedCount: nbBallonsNonExploses,
         device: isMobile,
-        screenwidth: window.innerWidth
+        screenwidth: window.innerWidth,
+        sequenceVersion: "fixed15_v1",
+        balloonData: JSON.stringify(data)
       };
 
       return "<h2>Fin de la tâche</h2>" +
@@ -343,7 +351,15 @@
       setPageMode("end-mode");
     },
     on_finish: function() {
-      window.parent.postMessage(end_screen.results, "*");
+      if (window.parent) {
+        window.parent.postMessage(end_screen.results, "*");
+      }
+
+      setTimeout(function() {
+        if (window.parent) {
+          window.parent.postMessage(end_screen.results, "*");
+        }
+      }, 300);
     }
   };
 
@@ -351,4 +367,4 @@
 
   jsPsych.run(timeline);
 </script>
-</html>
+</html> 
