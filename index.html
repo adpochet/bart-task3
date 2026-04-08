@@ -204,20 +204,17 @@
   let startSize = 0.3;
   let sizeIncrement = 0.02;
   let maxWidth = "900px";
-
- if (screenWidth <= 480) {
-  startSize = 0.10;
-  sizeIncrement = 0.0001;
+ 
+if (screenWidth <= 480) {
+  startSize = 0.20;
+  sizeIncrement = 0.025;
 } else if (screenWidth <= 768) {
-  startSize = 0.10;
-  sizeIncrement = 0.0001;
+  startSize = 0.25;
+  sizeIncrement = 0.03;
 } else if (screenWidth <= 1024) {
-  startSize = 0.10;
-  sizeIncrement = 0.0001;
-} else {
-  startSize = 0.10;
-  sizeIncrement = 0.0001;
-} 
+  startSize = 0.30;
+  sizeIncrement = 0.04;
+}
 
   if (screenHeight < 800) {
     startSize = Math.max(0.18, startSize - 0.03);
